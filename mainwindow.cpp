@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabWidget->setTabText(1, "Configuration");
     ui->tabWidget->setTabText(2, "Presets");
     ui->tabWidget->setTabText(3, "About");
+
+    ui->presets_searchLineEdit->setPlaceholderText("Search for a name... ");
 }
 
 MainWindow::~MainWindow() {
