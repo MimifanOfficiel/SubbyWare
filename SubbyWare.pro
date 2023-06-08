@@ -9,16 +9,22 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp \
-    preset.cpp
+    src/addpresetdialog.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/modifypresetdialog.cpp \
+    src/preset.cpp
 
 HEADERS += \
-    mainwindow.hpp \
-    preset.hpp
+    includes/addpresetdialog.hpp \
+    includes/mainwindow.hpp \
+    includes/modifypresetdialog.hpp \
+    includes/preset.hpp
 
 FORMS += \
-    mainwindow.ui
+    forms/addpresetdialog.ui \
+    forms/mainwindow.ui \
+    forms/modifypresetdialog.ui
 
 TRANSLATIONS += \
     SubbyWare_fr_FR.ts
