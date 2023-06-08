@@ -1,7 +1,8 @@
-
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
 
+#include "addpresetdialog.hpp"
+#include "modifypresetdialog.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -17,3 +18,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+void MainWindow::on_presets_newButton_clicked() {
+    AddPresetDialog *addDialog = new AddPresetDialog();
+
+    addDialog->show();
+}
+
+
+void MainWindow::on_presets_modifyButton_clicked() {
+    ModifyPresetDialog *modifyDialog = new ModifyPresetDialog();
+
+    modifyDialog->show();
+
+}
+
