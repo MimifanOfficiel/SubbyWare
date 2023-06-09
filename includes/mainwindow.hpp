@@ -3,12 +3,21 @@
 
 #include <QMainWindow>
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+
+#include <QVector>
+#include <QEvent>
+
+#include "includes/preset.hpp"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow {
-    Q_OBJECT
+class MainWindow : public QMainWindow { Q_OBJECT
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -17,9 +26,18 @@ public:
 private slots:
     void on_presets_newButton_clicked();
     void on_presets_modifyButton_clicked();
+    void on_actionQuit_triggered();
+
+    void closeEvent (QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;
+    QVector<Preset> presets;
+    bool saved = true;
+
+    void getPresets();
+    void save();
+    void unsavedChanges();
 };
 
 #endif // MAINWINDOW_HPP

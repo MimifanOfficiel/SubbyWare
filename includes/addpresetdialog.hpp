@@ -3,13 +3,9 @@
 
 #include <QDialog>
 
-namespace Ui {
-class AddPresetDialog;
-}
+namespace Ui { class AddPresetDialog; }
 
-class AddPresetDialog : public QDialog
-{
-    Q_OBJECT
+class AddPresetDialog : public QDialog { Q_OBJECT
 
 public:
     explicit AddPresetDialog(QWidget *parent = nullptr);

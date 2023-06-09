@@ -3,13 +3,9 @@
 
 #include <QDialog>
 
-namespace Ui {
-class ModifyPresetDialog;
-}
+namespace Ui { class ModifyPresetDialog; }
 
-class ModifyPresetDialog : public QDialog
-{
-    Q_OBJECT
+class ModifyPresetDialog : public QDialog { Q_OBJECT
 
 public:
     explicit ModifyPresetDialog(QWidget *parent = nullptr);

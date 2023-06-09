@@ -1,4 +1,4 @@
-#include "modifypresetdialog.hpp"
+#include "includes/modifypresetdialog.hpp"
 #include "ui_modifypresetdialog.h"
 
 ModifyPresetDialog::ModifyPresetDialog(QWidget *parent) : QDialog(parent), ui(new Ui::ModifyPresetDialog) {

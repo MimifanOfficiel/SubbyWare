@@ -1,5 +1,4 @@
-
-#include "mainwindow.hpp"
+#include "includes/mainwindow.hpp"
 
 #include <QApplication>
 #include <QLocale>
@@ -7,15 +6,9 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+
     QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale : uiLanguages) {
-        const QString baseName = "SubbyWare_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName)) {
-            a.installTranslator(&translator);
-            break;
-        }
-    }
+    if (translator.load(":/i18n/brandon-izoulet-sae-2-01_" + QLocale::system().name())) { a.installTranslator(&translator); }
 
     MainWindow w;
     w.show();

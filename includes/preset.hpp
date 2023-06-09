@@ -9,7 +9,7 @@ private:
     QString name, description, dirLocation, domType, domName;
 
 public:
-    inline Preset();
+    inline Preset() {}
     inline Preset(QString _name, QString _dirLocation) : name(_name), dirLocation(_dirLocation) {}
     inline Preset(QString _name, QString _dirLocation, QString _domType) : name(_name), dirLocation(_dirLocation), domType(_domType) {}    
     inline Preset(QString _name, QString desc, QString _dirLocation, QString _domType, QString _domName) : name(_name), description(desc), dirLocation(_dirLocation), domType(_domType), domName(_domName) {}
