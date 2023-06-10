@@ -1,5 +1,7 @@
 # SubbyWare
 
+# No release at the moment, only current source code is available
+
 ## What's this ?
   
   SubbyWare is a software made to be the new [Edgeware](https://github.com/PetitTournesol/Edgeware) <br>
