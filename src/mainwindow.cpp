@@ -5,6 +5,7 @@
 #include "includes/modifypresetdialog.hpp"
 
 #include <QMessageBox>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -18,13 +19,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->main_presetComboBox->setPlaceholderText("Preset name");
     ui->main_presetDescriptionTextEdit->setReadOnly(true);
 
-    getPresets();
+    getPresets("./subbyware.sbw");
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::getPresets(){
-    QFile file("./subbyware.sbw");
+void MainWindow::getPresets(QString filePath){
+    QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) { qWarning("Failed to open file"); return; }
 
     QByteArray data = file.readAll();
@@ -68,6 +69,16 @@ void MainWindow::save(){
 
     file.write("]");
     saved = true;
+}
+
+QString MainWindow::selectFile(bool save){
+    QFileDialog fileDialog;
+    fileDialog.setFileMode(QFileDialog::AnyFile);
+    fileDialog.setNameFilter("Fichiers SubbyWare (*.sbw)"); //filters files by extensions
+    fileDialog.setViewMode(QFileDialog::Detail);
+    if(save) fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+    if(fileDialog.exec()){ return fileDialog.selectedFiles().at(0); } //Returns the path of the first selected file
+    return "null";
 }
 
 void MainWindow::unsavedChanges(){
@@ -159,6 +170,11 @@ void MainWindow::on_main_presetComboBox_currentTextChanged(const QString &arg1) 
 
 
 void MainWindow::on_actionOpen_presets_list_triggered() {
-    //getPresets();
+    getPresets(selectFile(false));
+}
+
+
+void MainWindow::on_presets_importButton_clicked() {
+
 }
 
