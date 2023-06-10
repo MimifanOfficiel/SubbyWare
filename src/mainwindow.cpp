@@ -16,6 +16,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->presets_searchLineEdit->setPlaceholderText("Search for a name... ");
     ui->main_presetComboBox->setPlaceholderText("Preset name");
+    ui->main_presetDescriptionTextEdit->setReadOnly(true);
+
+    getPresets();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -37,20 +40,34 @@ void MainWindow::getPresets(){
             QJsonObject obj = value.toObject();
             Preset preset;
 
-            preset.setName(obj.value("name").toString());
-            preset.setDescription(obj.value("description").toString());
-            preset.setLocation(obj.value("dirLocation").toString());
-            preset.setDomName(obj.value("domName").toString());
-            preset.setDomType(obj.value("domType").toString());
+            preset.setName(obj.value("Name").toString());
+            preset.setDescription(obj.value("Description").toString());
+            preset.setCategory(obj.value("Category").toString());
+            preset.setLocation(obj.value("Location").toString());
+            preset.setDomName(obj.value("DomName").toString());
+            preset.setDomType(obj.value("DomType").toString());
 
             presets.push_back(preset);
+            ui->presets_listWidget->addItem(preset.getName());
+            ui->main_presetComboBox->addItem(preset.getName());
         }
     }
+
     saved = true;
 }
 
 void MainWindow::save(){
+    QFile file("./subbyware.sbw");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {return;}
+    file.write("[");
 
+    for(int i=0; i<presets.size()-1; i++){
+        file.write(presets[i].toJSON().toJson() + ",");
+    }
+    file.write(presets[presets.size()-1].toJSON().toJson());
+
+    file.write("]");
+    saved = true;
 }
 
 void MainWindow::unsavedChanges(){
@@ -88,9 +105,15 @@ void MainWindow::unsavedChanges(){
 
 void MainWindow::on_presets_newButton_clicked() {
     AddPresetDialog *addDialog = new AddPresetDialog();
-
+    connect(addDialog, SIGNAL(sendPreset(Preset&)), this, SLOT(addPresetToUI(Preset&)));
     addDialog->show();
     saved = false;
+}
+
+void MainWindow::addPresetToUI(Preset &preset){
+    presets.push_back(preset);
+    ui->presets_listWidget->addItem(preset.getName());
+    ui->main_presetComboBox->addItem(preset.getName());
 }
 
 
@@ -109,5 +132,33 @@ void MainWindow::closeEvent (QCloseEvent *event) {
 void MainWindow::on_actionQuit_triggered() {
     if(saved) QApplication::quit();
     else unsavedChanges();
+}
+
+
+void MainWindow::on_presets_listWidget_itemClicked(QListWidgetItem *item) {
+    QString presetName = item->text();
+    for(Preset &preset : presets){
+        if(preset.getName() == presetName){
+            ui->presets_infos_presetName->setText(preset.getName());
+            ui->presets_infos_presetDomType->setText(preset.getDomType());
+            ui->presets_infos_presetDomName->setText(preset.getDomName());
+            ui->presets_infos_presetCategoryName->setText(preset.getCategory());
+        }
+    }
+}
+
+
+void MainWindow::on_main_presetComboBox_currentTextChanged(const QString &arg1) {
+    QString presetName = arg1;
+    for(Preset &preset : presets){
+        if(preset.getName() == presetName){
+            ui->main_presetDescriptionTextEdit->setText(preset.getDescription());
+        }
+    }
+}
+
+
+void MainWindow::on_actionOpen_presets_list_triggered() {
+    //getPresets();
 }
 

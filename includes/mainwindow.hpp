@@ -10,6 +10,7 @@
 
 #include <QVector>
 #include <QEvent>
+#include <QListWidgetItem>
 
 #include "includes/preset.hpp"
 
@@ -30,12 +31,22 @@ private slots:
 
     void closeEvent (QCloseEvent *event);
 
+private slots:
+    void addPresetToUI(Preset&);
+
+    void on_presets_listWidget_itemClicked(QListWidgetItem *item);
+
+    void on_main_presetComboBox_currentTextChanged(const QString &arg1);
+
+    void on_actionOpen_presets_list_triggered();
+
 private:
     Ui::MainWindow *ui;
     QVector<Preset> presets;
     bool saved = true;
 
     void getPresets();
+
     void save();
     void unsavedChanges();
 };

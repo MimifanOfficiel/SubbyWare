@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>500</height>
+    <height>550</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>500</height>
+    <height>550</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>800</width>
-    <height>500</height>
+    <height>520</height>
    </size>
   </property>
   <property name="sizeIncrement">
@@ -32,8 +32,8 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
+   <layout class="QFormLayout" name="formLayout">
+    <item row="0" column="0" colspan="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -46,9 +46,9 @@
         <property name="geometry">
          <rect>
           <x>3</x>
-          <y>53</y>
+          <y>3</y>
           <width>771</width>
-          <height>331</height>
+          <height>421</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -130,11 +130,34 @@
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Run on save &amp; exit</string>
+                <string>Run on save &amp;&amp; exit</string>
                </property>
               </widget>
              </item>
             </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>Save and Exit</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -156,7 +179,7 @@
           <x>0</x>
           <y>0</y>
           <width>691</width>
-          <height>451</height>
+          <height>569</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -192,9 +215,9 @@ color: rgb(109, 109, 109);</string>
             </widget>
            </item>
            <item>
-            <widget class="QListView" name="presets_listView">
+            <widget class="QListWidget" name="presets_listWidget">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -202,21 +225,27 @@ color: rgb(109, 109, 109);</string>
              <property name="minimumSize">
               <size>
                <width>500</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>400</width>
-               <height>500</height>
+               <height>400</height>
               </size>
              </property>
             </widget>
            </item>
            <item>
             <layout class="QHBoxLayout" name="presets_buttonshLayout">
-             <item>
+             <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="presets_newButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>100</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {
     background-color: rgb(0,49,156);
@@ -234,8 +263,20 @@ QPushButton:pressed {
                </property>
               </widget>
              </item>
-             <item>
+             <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="presets_modifyButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>100</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {
     background-color: rgb(0,49,156);
@@ -253,8 +294,20 @@ QPushButton:pressed {
                </property>
               </widget>
              </item>
-             <item>
+             <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="presets_deleteButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>100</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true">QPushButton {
     background-color: rgb(0,49,156);
