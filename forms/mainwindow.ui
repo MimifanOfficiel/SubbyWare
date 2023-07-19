@@ -42,7 +42,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="main">
        <attribute name="title">
@@ -119,7 +119,7 @@
                  <string notr="true"/>
                 </property>
                 <property name="text">
-                 <string>Show on Discord</string>
+                 <string>Show on Discord (soon)</string>
                 </property>
                </widget>
               </item>
@@ -152,7 +152,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="main_saveExitButton">
               <property name="text">
                <string>Save and Exit</string>
               </property>
@@ -168,6 +168,37 @@
        <attribute name="title">
         <string>Tab 2</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="config_presetLabel">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QLabel {
+	text-align: center;
+}</string>
+              </property>
+              <property name="text">
+               <string>Preset</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="config_presetSelection"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="presets">
        <attribute name="title">
@@ -271,7 +302,7 @@ QPushButton:pressed {
 }</string>
                 </property>
                 <property name="text">
-                 <string>Import a preset</string>
+                 <string>Import presets</string>
                 </property>
                </widget>
               </item>
@@ -426,6 +457,22 @@ QPushButton:pressed {
                 </property>
                </widget>
               </item>
+              <item row="1" column="0">
+               <spacer name="presets_spacerPresetCategory">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>10</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="2" column="0">
                <widget class="QLabel" name="presets_infos_presetCategoryLabel">
                 <property name="text">
@@ -468,22 +515,6 @@ QPushButton:pressed {
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <spacer name="presets_spacerPresetCategory">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>10</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
               <item row="5" column="0">
                <widget class="QLabel" name="presets_StartupRunLabel">
                 <property name="text">
@@ -491,64 +522,8 @@ QPushButton:pressed {
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="presets_infosPopupsLabel">
-                <property name="text">
-                 <string>Popups</string>
-                </property>
-               </widget>
-              </item>
               <item row="5" column="1">
                <widget class="QLabel" name="presets_StartupRun">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0">
-               <widget class="QLabel" name="presets_infosVideosLabel">
-                <property name="text">
-                 <string>Videos</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="presets_infosAudioLabel">
-                <property name="text">
-                 <string>Audios</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="QLabel" name="presets_infosWebsitesLabel">
-                <property name="text">
-                 <string>Websites</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="QLabel" name="presets_infosPopups">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="1">
-               <widget class="QLabel" name="presets_infosVideos">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <widget class="QLabel" name="presets_infosAudios">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="1">
-               <widget class="QLabel" name="presets_infosWebsites">
                 <property name="text">
                  <string/>
                 </property>
@@ -653,25 +628,40 @@ QPushButton:pressed {
    <property name="text">
     <string>New presets list</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionOpen_presets_list">
    <property name="text">
     <string>Open presets list</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
     <string>Save</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionSave_As">
    <property name="text">
     <string>Save As</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
   </action>
   <action name="actionImport_preset">
    <property name="text">
     <string>Import preset</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionQuit">

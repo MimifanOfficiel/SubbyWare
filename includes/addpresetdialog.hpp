@@ -14,15 +14,17 @@ public:
     ~AddPresetDialog();
 
 signals:
-    void sendPreset(Preset&);
+    void sendPreset(Preset*);
 
 private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
-    void on_presetNameLineEdit_textEdited(const QString &arg1);
+    void on_presetNameLineEdit_textEdited();
     void on_description_textEdit_textChanged();
 
     void checkForm();
+
+    void on_browseButton_clicked();
 
 private:
     Ui::AddPresetDialog *ui;

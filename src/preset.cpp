@@ -1,7 +1,7 @@
 #include "includes/preset.hpp"
 
 Preset::Preset(QString _name, QString _dirLocation, QString _category, QString _domType, QString descOrDomName, bool isDesc)
-    : name(_name), dirLocation(_dirLocation), category(_category), domType(_domType) {
+    : name(_name), dirLocation(_dirLocation), category(_category), domType(_domType), config(new PresetConfigurations()) {
     if(isDesc) description = descOrDomName;
     else domName = descOrDomName;
 }
@@ -16,6 +16,7 @@ QJsonDocument Preset::toJSON(){
     jsonObj["DomName"] = domName;
     jsonObj["Category"] = category;
     jsonObj["Location"] = dirLocation;
+    jsonObj["PopupsInterval"] = config->getPopupInterval();
 
     return QJsonDocument(jsonObj);
 }

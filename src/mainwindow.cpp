@@ -3,9 +3,12 @@
 
 #include "includes/addpresetdialog.hpp"
 #include "includes/modifypresetdialog.hpp"
+#include "includes/popupsdialog.hpp"
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QTimer>
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -16,13 +19,123 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tabWidget->setTabText(3, "About");
 
     ui->presets_searchLineEdit->setPlaceholderText("Search for a name... ");
-    ui->main_presetComboBox->setPlaceholderText("Preset name");
-    ui->main_presetDescriptionTextEdit->setReadOnly(true);
 
     getPresets("./subbyware.sbw");
+    if(presets.size() == 0) ui->main_presetComboBox->setPlaceholderText("Preset name");
+    ui->main_presetDescriptionTextEdit->setReadOnly(true);
+
+    connect(ui->presets_searchLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterName);
+
+
+    connect(ui->main_saveExitButton, &QPushButton::clicked, this, &MainWindow::run);
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::run(){
+    Preset *preset = getCurrentPreset();
+
+    QTimer* timer = new QTimer();
+    timer->setInterval(preset->getConfig()->getPopupInterval());
+
+    QObject::connect(timer, &QTimer::timeout, [=]() {
+        PopupsDialog *dialog = new PopupsDialog(this, preset);
+        dialog->show();
+
+        QObject::connect(dialog, &PopupsDialog::finished, dialog, &PopupsDialog::deleteLater);
+
+    });
+
+    timer->start();
+    hide();
+}
+
+
+
+Preset* MainWindow::getCurrentPreset(){
+    for(int i=0; i<presets.size(); i++){
+        if(presets[i]->getName() == ui->main_presetComboBox->currentText()){
+            return presets[i];
+        }
+    }
+    return nullptr;
+}
+
+void MainWindow::on_actionOpen_presets_list_triggered() { getPresets(selectFile(false)); }
+
+
+void MainWindow::on_presets_importButton_clicked() { getPresets(selectFile(false)); }
+
+void MainWindow::on_actionSave_triggered() { save(); }
+
+void MainWindow::on_presets_newButton_clicked() {
+    AddPresetDialog *addDialog = new AddPresetDialog();
+
+    connect(addDialog, SIGNAL(sendPreset(Preset*)), this, SLOT(addPresetToUI(Preset*)));
+
+    addDialog->show();
+    saved = false;
+}
+
+void MainWindow::on_presets_modifyButton_clicked() {
+    if(ui->presets_listWidget->currentItem() == nullptr) return;
+    QString presetName = ui->presets_listWidget->currentItem()->text();
+    for(int i=0; i<presets.size(); i++){
+        if (presets[i]->getName() == presetName) {
+
+            Preset *preset = presets[i];
+
+            ModifyPresetDialog *modifyWindow = new ModifyPresetDialog();
+
+            connect(this, SIGNAL(sendPresetToModify(Preset*)), modifyWindow, SLOT(setOrigins(Preset*)));
+            emit sendPresetToModify(preset);
+
+            modifyWindow->show();
+        }
+
+    }
+    saved = false;
+}
+
+void MainWindow::on_actionQuit_triggered() {
+    if(saved) QApplication::quit();
+    else unsavedChanges();
+}
+
+void MainWindow::on_presets_listWidget_itemClicked(QListWidgetItem *item) {
+    QString presetName = item->text();
+    for(Preset *preset : presets){
+        if(preset->getName() == presetName){
+            ui->presets_infos_presetName->setText(preset->getName());
+            ui->presets_infos_presetDomType->setText(preset->getDomType());
+            ui->presets_infos_presetDomName->setText(preset->getDomName());
+            ui->presets_infos_presetCategoryName->setText(preset->getCategory());
+        }
+    }
+}
+
+
+void MainWindow::on_main_presetComboBox_currentTextChanged(const QString &arg1) {
+    QString presetName = arg1;
+    for(Preset *preset : presets){
+        if(preset->getName() == presetName){
+            ui->main_presetDescriptionTextEdit->setText(preset->getDescription());
+        }
+    }
+}
+
+
+void MainWindow::on_presets_deleteButton_clicked() {
+    if(ui->presets_listWidget->selectedItems().size() == 0) return;
+    for(int i=0; i<presets.size(); i++){
+        if(presets[i]->getName() == ui->presets_listWidget->currentItem()->text()){
+            presets[i] = nullptr;
+            ui->presets_listWidget->removeItemWidget(ui->presets_listWidget->currentItem());
+            ui->presets_listWidget->currentItem()->setHidden(true);
+            clearInfos();
+        }
+    }
+}
 
 void MainWindow::getPresets(QString filePath){
     QFile file(filePath);
@@ -39,18 +152,24 @@ void MainWindow::getPresets(QString filePath){
         QJsonValue value = jsonArray.at(i);
         if (value.isObject()) {
             QJsonObject obj = value.toObject();
-            Preset preset;
+            Preset *preset = new Preset();
+            PresetConfigurations *config = new PresetConfigurations();
 
-            preset.setName(obj.value("Name").toString());
-            preset.setDescription(obj.value("Description").toString());
-            preset.setCategory(obj.value("Category").toString());
-            preset.setLocation(obj.value("Location").toString());
-            preset.setDomName(obj.value("DomName").toString());
-            preset.setDomType(obj.value("DomType").toString());
+            preset->setName(obj.value("Name").toString());
+            preset->setDescription(obj.value("Description").toString());
+            preset->setCategory(obj.value("Category").toString());
+            preset->setLocation(obj.value("Location").toString());
+            preset->setDomName(obj.value("DomName").toString());
+            preset->setDomType(obj.value("DomType").toString());
+
+            config->setPopupInterval(obj.value("PopupsInterval").toInt());
+
+            preset->setConfig(config);
 
             presets.push_back(preset);
-            ui->presets_listWidget->addItem(preset.getName());
-            ui->main_presetComboBox->addItem(preset.getName());
+            ui->presets_listWidget->addItem(preset->getName());
+            ui->config_presetSelection->addItem(preset->getName());
+            ui->main_presetComboBox->addItem(preset->getName());
         }
     }
 
@@ -58,14 +177,14 @@ void MainWindow::getPresets(QString filePath){
 }
 
 void MainWindow::save(){
-    QFile file("./subbyware.sbw");
+    QFile file(currentFile);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {return;}
     file.write("[");
 
     for(int i=0; i<presets.size()-1; i++){
-        file.write(presets[i].toJSON().toJson() + ",");
+        file.write(presets[i]->toJSON().toJson() + ",");
     }
-    file.write(presets[presets.size()-1].toJSON().toJson());
+    file.write(presets[presets.size()-1]->toJSON().toJson());
 
     file.write("]");
     saved = true;
@@ -114,25 +233,11 @@ void MainWindow::unsavedChanges(){
     }
 }
 
-void MainWindow::on_presets_newButton_clicked() {
-    AddPresetDialog *addDialog = new AddPresetDialog();
-    connect(addDialog, SIGNAL(sendPreset(Preset&)), this, SLOT(addPresetToUI(Preset&)));
-    addDialog->show();
-    saved = false;
-}
 
-void MainWindow::addPresetToUI(Preset &preset){
+void MainWindow::addPresetToUI(Preset *preset){
     presets.push_back(preset);
-    ui->presets_listWidget->addItem(preset.getName());
-    ui->main_presetComboBox->addItem(preset.getName());
-}
-
-
-void MainWindow::on_presets_modifyButton_clicked() {
-    ModifyPresetDialog *modifyDialog = new ModifyPresetDialog();
-
-    modifyDialog->show();
-    saved = false;
+    ui->presets_listWidget->addItem(preset->getName());
+    ui->main_presetComboBox->addItem(preset->getName());
 }
 
 void MainWindow::closeEvent (QCloseEvent *event) {
@@ -140,41 +245,39 @@ void MainWindow::closeEvent (QCloseEvent *event) {
     else unsavedChanges();
 }
 
-void MainWindow::on_actionQuit_triggered() {
-    if(saved) QApplication::quit();
-    else unsavedChanges();
+
+void MainWindow::clearInfos(){
+    ui->presets_infos_presetName->clear();
+    ui->presets_infos_presetDomType->clear();
+    ui->presets_infos_presetDomName->clear();
+    ui->presets_infos_presetCategoryName->clear();
 }
 
 
-void MainWindow::on_presets_listWidget_itemClicked(QListWidgetItem *item) {
-    QString presetName = item->text();
-    for(Preset &preset : presets){
-        if(preset.getName() == presetName){
-            ui->presets_infos_presetName->setText(preset.getName());
-            ui->presets_infos_presetDomType->setText(preset.getDomType());
-            ui->presets_infos_presetDomName->setText(preset.getDomName());
-            ui->presets_infos_presetCategoryName->setText(preset.getCategory());
-        }
+void MainWindow::on_presets_searchLineEdit_textChanged() {
+    QStringList stringList;
+    foreach( QListWidgetItem *f, ui->presets_listWidget->selectedItems() )
+        stringList << f->text();
+
+    QCompleter *completer = new QCompleter(stringList, this);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    ui->presets_searchLineEdit->setCompleter(completer);
+}
+
+void MainWindow::filterName(const QString& filter) {
+    QList<QListWidgetItem*> allItems = ui->presets_listWidget->findItems("", Qt::MatchContains);
+    for (QListWidgetItem* item : allItems){
+        QString text = item->text();
+        if (text.contains(filter, Qt::CaseInsensitive))
+            item->setHidden(false);
+        else
+            item->setHidden(true);
     }
 }
 
-
-void MainWindow::on_main_presetComboBox_currentTextChanged(const QString &arg1) {
-    QString presetName = arg1;
-    for(Preset &preset : presets){
-        if(preset.getName() == presetName){
-            ui->main_presetDescriptionTextEdit->setText(preset.getDescription());
-        }
-    }
-}
-
-
-void MainWindow::on_actionOpen_presets_list_triggered() {
-    getPresets(selectFile(false));
-}
-
-
-void MainWindow::on_presets_importButton_clicked() {
+void MainWindow::on_tabWidget_tabBarClicked(int index) {
+    if(index != 1) return;
+    if(ui->config_presetSelection->currentText().isEmpty()) return;
 
 }
 
