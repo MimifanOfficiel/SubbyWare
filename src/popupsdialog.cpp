@@ -8,6 +8,7 @@
 #include <QFileInfoList>
 #include <QScreen>
 #include <random>
+#include <QMovie>
 
 
 PopupsDialog::PopupsDialog(QWidget *parent, Preset* _preset) : QDialog(parent), ui(new Ui::PopupsDialog), preset(_preset) {
@@ -35,14 +36,21 @@ PopupsDialog::PopupsDialog(QWidget *parent, Preset* _preset) : QDialog(parent), 
 
     QString selectedFile = filteredFiles.at(randomIndex).fileName();
 
-    QPixmap image(preset->getLocation() + "/" + selectedFile);
-    QPixmap newImg(image.scaled(image.size()*0.5));
-
     QLabel *imageLabel = new QLabel(this);
-    imageLabel->setPixmap(newImg);
-    imageLabel->setAlignment(Qt::AlignCenter);
 
-    setFixedSize(sizeHint(newImg));
+    if(filteredFiles.at(randomIndex).suffix() == "gif"){
+        QMovie *gifMovie = new QMovie(filteredFiles.at(randomIndex).filePath());
+        imageLabel->setMovie(gifMovie);
+        imageLabel->movie()->start();
+        setFixedSize(sizeHint(gifMovie->currentPixmap()));
+    } else {
+        QPixmap image(preset->getLocation() + "/" + selectedFile);
+        QPixmap newImg(image.scaled(image.size()*0.5));
+
+        imageLabel->setPixmap(newImg);
+        imageLabel->setAlignment(Qt::AlignCenter);
+        setFixedSize(sizeHint(newImg));
+    }
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(imageLabel);
