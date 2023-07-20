@@ -24,7 +24,7 @@ AddPresetDialog::AddPresetDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     ui->categoryComboBox->addItem("Hard");
     ui->categoryComboBox->addItem("Lag");
 
-    ui->fullLocationLabel->setText("./ressources");
+    ui->fullLocationLabel->setText("./ressources/imgs");
 
     ui->buttonBox->setEnabled(false);
 }
